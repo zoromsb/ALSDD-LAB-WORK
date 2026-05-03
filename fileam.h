@@ -28,8 +28,11 @@
 #ifndef FILEAM_H
 #define FILEAM_H
 
-#include <stddef.h>    /* size_t  */
-#include <sys/types.h> /* ssize_t */
+#include <stddef.h>    
+#include <sys/types.h> 
+#include "dynarray.h"
+#include "avltree.h"
+#include "operations.h"
 
 /* ── constants ──────────────────────────────────────────────────────── */
 
@@ -137,4 +140,12 @@ int fam_flush(FileAM *f);
  */
 void fam_state_dump(const FileAM *f);
 
-#endif /* FILEAM_H */
+
+void read_para(const char *path, DynArray *paragraphs);
+
+
+Node *store_sentences(char *paragraph);
+
+
+void display_avlchar(Node *tree);
+#endif
