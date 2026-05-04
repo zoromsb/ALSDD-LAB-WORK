@@ -14,8 +14,8 @@
 DynArray da_new(size_t initial_cap) {
     if (initial_cap == 0) initial_cap = 4;
     DynArray a;
-    a.data     = malloc(initial_cap * sizeof(void *));
-    a.size     = 0;
+    a.data = malloc(initial_cap * sizeof(void *));
+    a.size = 0;
     a.capacity = initial_cap;
     if (!a.data) { perror("da_new: malloc"); exit(1); }
     return a;
@@ -23,8 +23,8 @@ DynArray da_new(size_t initial_cap) {
 
 void da_free(DynArray *a) {
     free(a->data);
-    a->data     = NULL;
-    a->size     = 0;
+    a->data = NULL;
+    a->size = 0;
     a->capacity = 0;
 }
 
@@ -32,7 +32,7 @@ void da_free(DynArray *a) {
 
 static void da_grow(DynArray *a) {
     size_t  new_cap = a->capacity * 2;
-    void  **tmp     = realloc(a->data, new_cap * sizeof(void *));
+    void  **tmp = realloc(a->data, new_cap * sizeof(void *));
     if (!tmp) { perror("da_grow: realloc"); exit(1); }
     a->data     = tmp;
     a->capacity = new_cap;
@@ -51,22 +51,11 @@ void da_set(DynArray *a, size_t i, void *value) {
     a->data[i] = value;
 }
 
-/* ── stack operations ───────────────────────────────────────────────── */
-
-void da_push(DynArray *a, void *value) {
-    if (a->size == a->capacity) da_grow(a);
-    a->data[a->size++] = value;
-}
-
-void *da_pop(DynArray *a) {
-    if (a->size == 0) { fprintf(stderr, "da_pop: underflow\n"); exit(1); }
-    return a->data[--a->size];
-}
-
 /* ── positional operations ──────────────────────────────────────────── */
 
 void da_insert(DynArray *a, size_t i, void *value) {
-    if (i > a->size) { fprintf(stderr, "da_insert: index out of range\n"); exit(1); }
+    if (i > a->size) 
+    { fprintf(stderr, "da_insert: index out of range\n"); exit(1); }
     if (a->size == a->capacity) da_grow(a);
     memmove(&a->data[i + 1], &a->data[i], (a->size - i) * sizeof(void *));
     a->data[i] = value;
@@ -93,4 +82,14 @@ void da_print_int(const DynArray *a) {
     for (size_t i = 0; i < a->size; i++)
         printf("%s%d", i ? ", " : "", (int)(intptr_t)a->data[i]);
     printf("]  (cap=%zu)\n", a->capacity);
+}
+
+void da_push(DynArray *a, void *value) {
+    if (a->size == a->capacity) da_grow(a);
+    a->data[a->size++] = value;
+}
+ 
+void *da_pop(DynArray *a) {
+    if (a->size == 0) { fprintf(stderr, "da_pop: empty array\n"); exit(1); }
+    return a->data[--a->size];
 }
