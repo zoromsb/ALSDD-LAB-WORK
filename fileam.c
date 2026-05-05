@@ -2,9 +2,9 @@
  * fileam.c — File Abstract Machine  (implementation)
  * See fileam.h for the full API documentation.
  */
-
+#include <ctype.h>
 #include "fileam.h"
-
+#include "operations.c"
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -12,6 +12,7 @@
 #include <fcntl.h>
 #include <unistd.h>
 #include <sys/stat.h>
+#include <ctype.h>
 
 /* ── helpers ────────────────────────────────────────────────────────── */
 
@@ -192,4 +193,80 @@ int fam_close(FileAM *f) {
 }
 
 /* ── demo ───────────────────────────────────────────────────────────── */
+
+void read_para(const char *path, DynArray *paragraphs) {
+    FILE *file = fopen(path, "r");
+    if (!file) { 
+        perror("read_para: fopen"); 
+        return; 
+    }
+
+    char line[1024];
+    char current_para[8192] = ""; // Increased buffer size
+
+    while (fgets(line, sizeof(line), file)) {
+        // Trim trailing newline/carriage return for easier checking
+        size_t len = strlen(line);
+        
+        // Check if the line is effectively "blank" (only whitespace or newline)
+        int is_blank = 1;
+        for (size_t i = 0; i < len; i++) {
+            if (!isspace((unsigned char)line[i])) {
+                is_blank = 0;
+                break;
+            }
+        }
+
+        if (is_blank) {
+            if (strlen(current_para) > 0) {
+                char *copy = malloc(strlen(current_para) + 1);
+                if (copy) {
+                    strcpy(copy, current_para);
+                    da_push(paragraphs, copy);
+                }
+                current_para[0] = '\0'; // Reset for next paragraph
+            }
+        } else {
+            // Ensure we don't overflow current_para
+            if (strlen(current_para) + len < sizeof(current_para) - 1) {
+                strcat(current_para, line);
+            }
+        }
+    }
+
+    // Handle the final paragraph if the file doesn't end with a blank line
+    if (strlen(current_para) > 0) {
+        char *copy = malloc(strlen(current_para) + 1);
+        if (copy) {
+            strcpy(copy, current_para);
+            da_push(paragraphs, copy);
+        }
+    }
+
+    fclose(file);
+}
+
+Node *store_sentences(char *paragraph) {
+    Node *root = NULL;
+    
+    char copy[4096];
+    strcpy(copy, paragraph);
+    
+    char *sentence = strtok(copy, ".!?");
+    while (sentence != NULL) {
+        while (*sentence == ' ' || *sentence == '\n')
+            sentence++;
+        
+        if (strlen(sentence) > 0) {
+            char *s = malloc(strlen(sentence) + 1);
+            strcpy(s, sentence);
+            to_lowercase(s);
+            root = avl_insert(root, s, NULL);
+        }
+        
+        sentence = strtok(NULL, ".!?");
+    }
+    
+    return root;
+}
 
