@@ -11,7 +11,7 @@
                 "-g3",
                 "${workspaceFolder}\\*.c",
                 "-o",
-                "${workspaceFolder}\\output\\my_program.exe"
+                "${workspaceFolder}/output/my_program"
             ],
             "group": {
                 "kind": "build",
@@ -24,13 +24,13 @@
         {
             "type": "cppbuild",
             "label": "C/C++: gcc.exe build active file",
-            "command": "C:\\mingw64\\bin\\gcc.exe",
+            "command": "/usr/bin/gcc",
             "args": [
                 "-fdiagnostics-color=always",
                 "-g",
                 "${file}",
                 "-o",
-                "${fileDirname}\\${fileBasenameNoExtension}.exe"
+                "${fileDirname}/${fileBasenameNoExtension}"
             ],
             "options": {
                 "cwd": "${fileDirname}"
