@@ -124,3 +124,11 @@ void display_avlchar(Node *tree) {
     printf("- %s\n", tree->key);
     display_avlchar(tree->right);
 }
+
+void avl_free_keys(Node *n) {
+    if (n == NULL) return;
+    avl_free_keys(n->left);
+    avl_free_keys(n->right);
+    free((char *)n->key);
+    free(n);
+}

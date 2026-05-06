@@ -269,4 +269,11 @@ Node *store_sentences(char *paragraph) {
     
     return root;
 }
-
+Node *store_paragraphs(DynArray *para, size_t start, size_t count) {        //store the paragraphs from a DA to an AVL tree
+    Node *root = NULL;
+    for (size_t i = start; i < start + count; i++) {
+        char *p = (char *)da_get(para, i);
+        root = avl_insert(root, p, NULL);
+    }
+    return root;
+}

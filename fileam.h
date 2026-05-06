@@ -148,4 +148,6 @@ Node *store_sentences(char *paragraph);
 
 
 void display_avlchar(Node *tree);
+
+Node *store_paragraphs(DynArray *para, size_t start, size_t count);
 #endif
