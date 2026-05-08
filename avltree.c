@@ -116,3 +116,19 @@ void avl_print(const Node *root) {
     print_tree(root, 2);
     printf("  root=\"%s\"  height=%d\n", root->key, ht(root));
 }
+void display_avlchar(Node *tree) {
+    if (tree == NULL)
+        return;
+    
+    display_avlchar(tree->left);
+    printf("- %s\n", tree->key);
+    display_avlchar(tree->right);
+}
+
+void avl_free_keys(Node *n) {
+    if (n == NULL) return;
+    avl_free_keys(n->left);
+    avl_free_keys(n->right);
+    free((char *)n->key);
+    free(n);
+}
