@@ -80,5 +80,6 @@ void avl_free(Node *n);
  * Shows key, height, and balance factor for each node.
  */
 void avl_print(const Node *root);
+void avl_free_keys(Node *n);
 
 #endif /* AVLTREE_H */
